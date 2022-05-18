@@ -95,7 +95,7 @@ def train(train_dir,
                     max_to_keep=checkpoints_to_keep,
                     keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours))
             ###################
-            
+
             tf_slim.training.train(
                 train_op=train_op,
                 logdir=train_dir,
@@ -116,8 +116,7 @@ def main_defaults():
             tf_file_reader=tf.data.TFRecordDataset,
             is_training=True,
             cache_dataset=True)
-
-    vae_train.train(
+    train(
         train_dir=train_dir,
         config=prior_hierdec_mel_16bar,
         dataset_fn=dataset_fn,
