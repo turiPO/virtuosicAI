@@ -1,3 +1,8 @@
+# program specific
+./tmp/
+*.tar
+*.tfrecord
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

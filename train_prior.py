@@ -1,8 +1,10 @@
+import tempfile
+
 import tensorflow.compat.v1 as tf
-import tensorflow.contrib.training
-import tensorflow.contrib.framework
+
 import tf_slim
 import os
+import tarfile
 
 from magenta.models.music_vae import data
 from magenta.models.music_vae import music_vae_train as vae_train
@@ -10,16 +12,38 @@ from magenta.models.music_vae import music_vae_train as vae_train
 from model import prior_hierdec_mel_16bar
 from cmd_args import FLAGS
 
-PRE_TRAINED_PATH = "hierdec-mel_16bar.tar"
+
+def split_freeze_train(var_substring):
+    model_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
+    tuning = [v for v in model_vars if var_substring in v.name]
+    restoring = list(set(model_vars) - set(tuning))
+    return restoring, tuning
 
 
-def vars_freezer():
-    pass  # todo
+def set_tuning_vars(vars):
+    tf.get_default_graph().clear_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
+    return [tf.add_to_collection(tf.GraphKeys.TRAINABLE_VARIABLES, v) for v in vars]
+
+
+def load_checkpoint(checkpoint_tar, vars2restore):
+    return tf_slim.assign_from_checkpoint(checkpoint_tar, vars2restore)
+
+
+def load_tar_checkpoint(checkpoint_tar, vars2restore):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        tar = tarfile.open(checkpoint_tar)
+        tar.extractall(temp_dir)
+        # Assume only a single checkpoint is in the directory.
+        for name in tar.getnames():
+            if name.endswith('.index'):
+                ckpt_name = os.path.join(temp_dir, name[0:-6])
+                return load_checkpoint(ckpt_name, vars2restore)
 
 
 def train(train_dir,
           config,
           dataset_fn,
+          checkpoint_tar,
           checkpoints_to_keep=5,
           keep_checkpoint_every_n_hours=1,
           num_steps=None,
@@ -27,6 +51,8 @@ def train(train_dir,
           num_sync_workers=0,
           num_ps_tasks=0,
           task=0):
+    # var_train_pattern = ["latent", ]
+    var_train_pattern = ["encoder", ]
     tf.gfile.MakeDirs(train_dir)
     is_chief = (task == 0)
     if is_chief:
@@ -43,6 +69,10 @@ def train(train_dir,
                         is_training=True)
 
             optimizer = model.train(**vae_train._get_input_tensors(dataset_fn(), config))
+
+            # set which vars in the pre-trained model to train
+            restoring, tuning = split_freeze_train(var_train_pattern[0])
+            set_tuning_vars(tuning)
 
             hooks = []
             if num_sync_workers:
@@ -79,18 +109,17 @@ def train(train_dir,
             if num_steps:
                 hooks.append(tf.train.StopAtStepHook(last_step=num_steps))
 
-            ### FINE TUNING ###
-            variables_to_restore = tensorflow.contrib.framework.get_variables_to_restore(
-                include=[v.name for v in vars_freezer])
+            # define fine tuning
+            vars2restore = tf_slim.get_variables_to_restore(
+                include=[v.name for v in restoring])
 
-            init_assign_op, init_feed_dict = tensorflow.contrib.framework.assign_from_checkpoint(
-                config.pretrained_path, variables_to_restore)
+            pretrained_operation, pretrained_weights = load_tar_checkpoint(checkpoint_tar, vars2restore)
 
-            def init_assign_fn(scaffold, sess):
-                sess.run(init_assign_op, init_feed_dict)
+            def init_pre_fn(scaffold, tf_session):
+                tf_session.run(pretrained_operation, pretrained_weights)
 
             scaffold = tf.train.Scaffold(
-                init_fn=init_assign_fn,
+                init_fn=init_pre_fn,
                 saver=tf.train.Saver(
                     max_to_keep=checkpoints_to_keep,
                     keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours))
@@ -106,24 +135,33 @@ def train(train_dir,
                 is_chief=is_chief)
 
 
-def main_defaults():
+def main_defaults(extra_argv):
     run_dir = os.path.expanduser(FLAGS.run_dir)
     train_dir = os.path.join(run_dir, 'train')
 
+    config_update_map = {}
+    if FLAGS.examples_path:
+        config_update_map['%s_examples_path' % FLAGS.mode] = os.path.expanduser(FLAGS.examples_path)
+
+    prior_hierdec_mel_16bar_conf = vae_train.configs.update_config(prior_hierdec_mel_16bar, config_update_map)
+
     def dataset_fn():
         return data.get_dataset(
-            prior_hierdec_mel_16bar,
+            prior_hierdec_mel_16bar_conf,
             tf_file_reader=tf.data.TFRecordDataset,
-            is_training=True,
+            is_training=FLAGS.mode == 'train',
             cache_dataset=True)
+
     train(
         train_dir=train_dir,
-        config=prior_hierdec_mel_16bar,
+        config=prior_hierdec_mel_16bar_conf,
         dataset_fn=dataset_fn,
-        num_steps=10
+        num_steps=10,
+        checkpoint_tar=FLAGS.checkpoint_tar
     )
 
 
 if __name__ == "__main__":
+    tf.disable_v2_behavior()
     tf.logging.set_verbosity(FLAGS.log)
     tf.app.run(main_defaults)
