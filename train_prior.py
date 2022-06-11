@@ -13,9 +13,9 @@ from model import prior_hierdec_mel_16bar
 from cmd_args import FLAGS
 
 
-def split_freeze_train(var_substring):
+def split_freeze_train(var_substrings, slice_to_end):
     model_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
-    tuning = [v for v in model_vars if var_substring in v.name]
+    tuning = [v for v in model_vars if any([sub in v.name for sub in var_substrings])][slice_to_end:]
     restoring = list(set(model_vars) - set(tuning))
     return restoring, tuning
 
@@ -51,8 +51,8 @@ def train(train_dir,
           num_sync_workers=0,
           num_ps_tasks=0,
           task=0):
-    # var_train_pattern = ["latent", ]
-    var_train_pattern = ["encoder", ]
+    var_train_patterns = ["decoder"]
+    slice_to_end = -2
     tf.gfile.MakeDirs(train_dir)
     is_chief = (task == 0)
     if is_chief:
@@ -71,8 +71,11 @@ def train(train_dir,
             optimizer = model.train(**vae_train._get_input_tensors(dataset_fn(), config))
 
             # set which vars in the pre-trained model to train
-            restoring, tuning = split_freeze_train(var_train_pattern[0])
+            restoring, tuning = split_freeze_train(var_train_patterns, slice_to_end)
             set_tuning_vars(tuning)
+
+            if FLAGS.log == 'DEBUG':
+                print(f"Tuning parameters: {tuning}")
 
             hooks = []
             if num_sync_workers:
@@ -123,7 +126,6 @@ def train(train_dir,
                 saver=tf.train.Saver(
                     max_to_keep=checkpoints_to_keep,
                     keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours))
-            ###################
 
             tf_slim.training.train(
                 train_op=train_op,
