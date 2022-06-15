@@ -1,7 +1,7 @@
 # VirtuosicAI - fine tune musicVAE
-Fine tuning [MusicVAE](https://magenta.tensorflow.org/music-vae) of magenta.
+Fine tuning Megenta [MusicVAE](https://magenta.tensorflow.org/music-vae).
 
-First, install magenta and download the pre-trained model. See [Magenta github](https://github.com/magenta/magenta/tree/main/magenta/models/music_vae) for details.
+First, install magenta and download the pre-trained model. See [Magenta repo](https://github.com/magenta/magenta/tree/main/magenta/models/music_vae) for details.
 
 Crete your dataset by converting midis into single tfrecord:
 ```
