@@ -44,6 +44,8 @@ def train(train_dir,
           config,
           dataset_fn,
           checkpoint_tar,
+          component=['encoder', 'decoder'],
+          finetune_from_layer=0,
           checkpoints_to_keep=5,
           keep_checkpoint_every_n_hours=1,
           num_steps=None,
@@ -51,8 +53,8 @@ def train(train_dir,
           num_sync_workers=0,
           num_ps_tasks=0,
           task=0):
-    var_train_patterns = ["decoder"]
-    slice_to_end = -2
+    var_train_patterns = component
+    slice_to_end = finetune_from_layer
     tf.gfile.MakeDirs(train_dir)
     is_chief = (task == 0)
     if is_chief:
@@ -159,7 +161,10 @@ def main_defaults(extra_argv):
         config=prior_hierdec_mel_16bar_conf,
         dataset_fn=dataset_fn,
         num_steps=10,
-        checkpoint_tar=FLAGS.checkpoint_tar
+        checkpoint_tar=FLAGS.checkpoint_tar,
+        component=['encoder', 'decoder'] if len(FLAGS.finetune_component) == 0 else [FLAGS.finetune_component],
+        finetune_from_layer=FLAGS.finetune_from_layer
+
     )
 
 
