@@ -1,4 +1,4 @@
-# virtuousicAI - deep music composition
+# virtuosicAI - deep music composition
 # Related work
 ## Passing the Turing test
 
