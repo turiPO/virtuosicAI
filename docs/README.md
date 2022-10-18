@@ -1,6 +1,6 @@
 [TOC]
 # Abstract
-In this work we examine the ability of a machine to compose good quality music with minimalistic amount of resources. Beginning with relevant review of previous work and the current state of the art model we describe two new approaches that hasn't been done yet in the music geenration field.
+In this work we examine the ability of a machine to compose good quality music with minimalistic amount of resources. Beginning with relevant review of previous work and the current state of the art model we describe new approache that hasn't been done yet in the music geenration field.
 
 # Music Generation - A Review
 ## Passing the Turing test
