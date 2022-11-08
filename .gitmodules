@@ -1,0 +1,3 @@
+[submodule "CopyrightFuturePop/pop-lyrics-dataset"]
+	path = CopyrightFuturePop/pop-lyrics-dataset
+	url = https://github.com/mathigatti/pop-lyrics-dataset.git

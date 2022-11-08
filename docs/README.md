@@ -91,7 +91,7 @@ A music piece contains a few important elements, which used as feature in the ge
 5. Texture - @todo
 6. Instruments - voice amount, voices range, what kind of instrument etc.
 -->
-# Mini project: prior latent space optimization using MusicVAE 
+# Research no.1: prior latent space optimization using MusicVAE 
 <!-- During the research I explored various generation models and focus on two topics. --> 
 ## Introduction
 Optimizing a model is an important task in the field of DL, it can be for better quiality purposes or for converting a model to do a more specific task. In case of music generation, many models can generate good quality music but without a way to produce a specific genre.   
@@ -107,6 +107,34 @@ We used latent space optimization technique using MusiceVAE model in order to en
 We developed the ability to fine-tune any part of MusicVAE 16 bars generation model, which means it can be trained under a specific genre and then it will be biased towards it. For research purposes we allowd couple of options: train only the decoder or train only the encoder or train both. Creating a smaller encoder is not needed for MusicVAE becasue the training is quick enaugh and will stay for future work.
 
 [code: https://github.com/turiPO/virtuousicAI/tree/main/PriorMusicVAE]
+
+## Future work
+There are many unwalked areas in the field of music generation. The most important one is the lack of datasets, which is the main reason why the models are not as good as they should be. In addition, the lack of evaluation methods is a big problem, because the current mathematical developement to measure music is very basic. The latent space optimization project can be extended in many ways, for example by converting other latent based music generation models into a conditional ones. Another way is to create a new evaluation method which will be used for training.
+
+# Research no.2: copyright of all the future song lyrics
+## Abstract
+The growth of storage and computing power is exponential in the past decade. However, sometimes the law is not able to keep up with the technology. In this paper we will discuss ability to the copyright of all she future song lyrics and accidental infringement of pop songs lyrics.
+Theoretically, by computing all the common future pop song lyrics a law firm can abuse the copyright law ans sue royalties. The paper prevents this issue by copyrighting all the future song lyrics which are likely to be. In addition, this way it prevents accidental infringement of pop songs lyrics.
+
+## Copyright laws issue in the pop music industry
+Copyright is one of the main topics in the art insdusry. While songs titles, rhythms, musical styles and harmony have all been doomed to be not copyrightable, melodies and lyrics are protected. Copyrights laws originally protects artists who creates artworks which are easy to copy (e.g. painting, music piece, litrature). However, in the past decade many musicologists and anthropologists have pointed to the indutrialisation and capitalization of the pop music. According to these researcher, in today's pop music industry the melody and harmony is much less complex then other classical genres, the pop songs are more similiar to one another comparing to classical music or jazz music. On the other side, other researchers says pop music complication moved from the harmony, melody and lyrics to other aspect of the music like the music visual clip and the sound effects. Therefore, the copyright laws, which protects only lyrics and melody are not relevant anymore. \[[11]\]
+
+## Related work
+Copyright issue with melodies has been disccussed in a TED talk by Daniel Riehl. Riehl bruteforces all the future common melodies of pop songs and store it on a disk, which counts as a valid copyright of the melodies. By providing the copyright to the public Rihel claims to prevent accidental infringement.  \[[12]\]
+
+## Approach
+Using the corpus of all the lyrics of the pop songs from 1950 to 2020 we can create a markov chain contains the probabilities of the transitions between one word to another in pop songs. Then we compute the amount of common combinations with certain probability threshold and estimate the amount of compute and storage power needed in order to store all the common future lyrics and thus copyright them.
+
+## Implemetation
+One of the challenges is the lack of pure english pop lyrics dataset. Most of the dataset contains other genres and other language. However, for the POC purposes we took a dataset which most of it contains english pop songd and we preprocess it. \[[13]\] 
+After the pre-processing we used the dataset in order to train a language model based on MLE. The model is a simple markov chain which counts the amount of times a word is followed by another word. After training the model on the whole dataset we compute the amount of common combinations with certain probability threshold. The amount of storage and compute power needed can be estimated by the amount of combinations and the amount of bits needed to store each combination.
+
+[code: ]
+
+
+## Future work
+In a world in which all the future melodies and lyrics can be stored on a disk the copyright law is theoretically not relevant. However, it is highly unlikely that the supreme court will stick to the current interpretation of the law. A possible solution is to create a tool which can check how distinugish a song from pop songs published before. This tool can be used by the record companies and artists in order to check if their song is original enough to be published.
+In addition, the implementation of the markov chain can be improved by using neural language models which are more accurate.
 
 <!--
 # Mini project no.2: text2text2music transformers
@@ -136,3 +164,14 @@ We developed the ability to fine-tune any part of MusicVAE 16 bars generation mo
 [8]: <https://doi.org/10.48550/arXiv.2005.00341> "Prafulla Dhariwal, Heewoo Jun, Christine Payne, Jong Wook Kim, Alec Radford, Ilya Sutskever. Jukebox: A Generative Model for Music, 2020."
 [9]: <https://doi.org/10.48550/arXiv.1906.11880> "Aviv Gabbay, Yedid Hoshen. Style Generator Inversion for Image Enhancement and Animation, 2019."
 [10]: <https://doi.org/10.48550/arXiv.1707.05776> "Piotr Bojanowski, Armand Joulin, David Lopez-Paz, Arthur Szlam. Optimizing the Latent Space of Generative Networks, 2018."
+[11]: <https://doi.org/10.7312/kul-17602-005> "Adorno, Theodor W. and Horkheimer, Max. The Culture Industry: Enlightenment as Mass Deception. West Sussex: Columbia University Press, 2020, pp. 80-96"
+[12]: <https://www.youtube.com/watch?v=sJtm0MoOgiU> "Damien Riehl. Copyrighting all the melodies to avoid accidental infringement. 2020"
+[13]: <https://github.com/mathigatti/pop-lyrics-dataset/tree/master/lyrics> "https://github.com/mathigatti/pop-lyrics-dataset/tree/master/lyrics"
+
+# Appendix - small experiments
+During the work we conducted many experiment with different models and datasets. Here are some of them:
+*Music Transformer longer melodies:* Music transformer is a large transformer model by Google Magenta which can produce melodies using a "prompt" - beginning of the melody. One of the main issues with Music Transformer is that it is very limited by the context it can preserved through time, means after a few minutes the music sounds like random. In order to overcome this limitation we tried to concat melodies by taking each melody ending as the prompt for the next one. The results where far better than the naive generation of long melody.
+[code: https://github.com/turiPO/virtuosicAI/blob/main/notebooks/music%20transfomer.ipynb]
+<br>
+*MusicVAE with conditional varience:* Dropping the encoder of the VAE, we can inject a random vector into the decoder and create melodies. A regular VAE interpret the encoder output as mean and varience for normal gaussian sampling, which then feed the output of it into the decoder. In order to test MusicVAE we sampled from a normal distribution and injected it into the decoder. Each time we sampled with higher varience in order to validate the behaviour of the model. The results where as expected, the model generated more random melodies with higher varience and total random when the vector was randomed. 
+[code: https://github.com/turiPO/virtuosicAI/blob/main/notebooks/MusicVAE%20notebooks.ipynb]
