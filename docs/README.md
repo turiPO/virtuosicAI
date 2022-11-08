@@ -127,20 +127,14 @@ Using the corpus of all the lyrics of the pop songs from 1950 to 2020 we can cre
 
 ## Implemetation
 One of the challenges is the lack of pure english pop lyrics dataset. Most of the dataset contains other genres and other language. However, for the POC purposes we took a dataset which most of it contains english pop songd and we preprocess it. \[[13]\] 
-After the pre-processing we used the dataset in order to train a language model based on MLE. The model is a simple markov chain which counts the amount of times a word is followed by another word. After training the model on the whole dataset we compute the amount of common combinations with certain probability threshold. The amount of storage and compute power needed can be estimated by the amount of combinations and the amount of bits needed to store each combination.
+After the pre-processing we used the dataset in order to train a language model based on MLE. The model is a simple markov chain which counts the amount of times a word is followed by another word. After training the model on the whole dataset we compute the amount of common combinations with certain probability threshold. The amount of storage and compute power needed can be estimated by the amount of combinations and the amount of bytes needed to store each combination.
 
-[code: ]
-
+[code: https://github.com/turiPO/virtuosicAI/tree/main/CopyrightFuturePop]
 
 ## Future work
 In a world in which all the future melodies and lyrics can be stored on a disk the copyright law is theoretically not relevant. However, it is highly unlikely that the supreme court will stick to the current interpretation of the law. A possible solution is to create a tool which can check how distinugish a song from pop songs published before. This tool can be used by the record companies and artists in order to check if their song is original enough to be published.
 In addition, the implementation of the markov chain can be improved by using neural language models which are more accurate.
 
-<!--
-# Mini project no.2: text2text2music transformers
-
-@staytuned
--->
 
 # Reference
 \[1\] "Gaëtan Hadjeres, François Pachet, Frank Nielsen. Carlos Hernandez-Olivan, Jose R. Beltran. Music Composition with Deep Learning: A Review, 2017." <br>
@@ -153,6 +147,9 @@ In addition, the implementation of the markov chain can be improved by using neu
 \[8\] "Prafulla Dhariwal, Heewoo Jun, Christine Payne, Jong Wook Kim, Alec Radford, Ilya Sutskever. Jukebox: A Generative Model for Music, 2020." <br>
 \[9\] "Aviv Gabbay, Yedid Hoshen. Style Generator Inversion for Image Enhancement and Animation, 2019." <br>
 \[10\] "Piotr Bojanowski, Armand Joulin, David Lopez-Paz, Arthur Szlam. Optimizing the Latent Space of Generative Networks, 2018." <br>
+\[11\]: "Adorno, Theodor W. and Horkheimer, Max. The Culture Industry: Enlightenment as Mass Deception. West Sussex: Columbia University Press, 2020, pp. 80-96" <br>
+\[12\]: "Damien Riehl. Copyrighting all the melodies to avoid accidental infringement. 2020" <br>
+\[13\]: "https://github.com/mathigatti/pop-lyrics-dataset/tree/master/lyrics" <br>
 
 [1]: <https://doi.org/10.48550/arXiv.2108.12290> "Gaëtan Hadjeres, François Pachet, Frank Nielsen. Carlos Hernandez-Olivan, Jose R. Beltran. Music Composition with Deep Learning: A Review, 2017."
 [2]: <https://doi.org/10.48550/arXiv.1612.01010> " DeepBach: a Steerable Model for Bach Chorales Generation, 2021."
