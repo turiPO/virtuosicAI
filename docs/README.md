@@ -91,7 +91,7 @@ A music piece contains a few important elements, which used as feature in the ge
 5. Texture - @todo
 6. Instruments - voice amount, voices range, what kind of instrument etc.
 -->
-# First Topic: prior latent space optimization using MusicVAE 
+# First topic: prior latent space optimization using MusicVAE 
 ## Introduction
 Optimizing a model is a crucial task in the field of Deep Learning (DL), whether it is to enhance the quality of the output or to adapt the model to perform a more specific task. In the context of music generation, numerous models can generate music of good quality, but they often lack the ability to produce music of a specific genre.
 
@@ -110,7 +110,7 @@ We have developed the capability to fine-tune any part of the MusicVAE 16-bar ge
 ## Future work
 In the field of music generation, there are several crucial areas that warrant further exploration. Addressing the lack of comprehensive datasets and developing robust evaluation methods are key priorities to enhance the quality and variety of generated music. Additionally, extending the latent space optimization approach to other models would provide fine-grained control over music generation, enabling specific genre or style biases. Moreover, an intriguing avenue is the development of a text-to-music generative model based on the research conducted in this study, leveraging insights from latent space optimization and conditioning techniques to translate textual input into coherent and expressive musical compositions. By advancing in these directions, we can unlock new possibilities for creative expression and push the boundaries of generative music.
 
-# Second Topic: copyright of all the future song lyrics
+# Second topic: copyright of all the future song lyrics
 ## Abstract
 The exponential growth of storage and computing power over the past decade has posed challenges for copyright laws to keep pace with advancing technology. This paper addresses the issue of copyrightability of future song lyrics and accidental infringement of pop song lyrics. The potential exploitation of copyright laws by law firms to sue for royalties based on computing common future pop song lyrics is discussed. To prevent this, the paper proposes copyrighting all likely future song lyrics and thereby mitigating accidental infringement of existing pop songs.
 
